@@ -28,10 +28,5 @@ setup(
         'requests',
     ],
     package_data={},
-    data_files=[],
-    entry_points={
-        'console_scripts': [
-            'example = example.__main__:main'
-        ],
-    },
+    data_files=[]
 )

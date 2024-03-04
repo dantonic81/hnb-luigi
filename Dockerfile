@@ -1,21 +1,13 @@
-# Contains the code for packaging up the example module, wrapped in luigi goodness.
-# basically pip installing the example package and dependencies
-# To Build: docker build . -t <name>:<TAG#>
-#
-FROM python:3.6.4
+FROM axiom/docker-luigi:2.7.9-alpine
 
-# Copy all project files and chdir
-COPY . /opt/example
-WORKDIR /opt/example
+# Install build dependencies
+RUN apk add --no-cache build-base postgresql-dev
 
-# Volume to save results
-VOLUME ["/data"]
+# Copy the requirements.txt file containing the Python dependencies
+COPY requirements.txt /tmp/requirements.txt
 
-# Install requirements
-RUN pip install -r requirements.txt
+# Install the Python dependencies
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-# Install
-RUN pip install -e .
-
-EXPOSE 8080
-ENTRYPOINT ["example"]
+# Clean up
+RUN rm /tmp/requirements.txt

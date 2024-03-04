@@ -1,16 +1,8 @@
 version: '3'
 
 services:
-#  example:
-#    build: .
-#    restart: always
-#    environment:
-#        - INITIAL_SLEEP=30
-#    networks:
-#      - backend
-
   luigi:
-    image: axiom/docker-luigi:2.7.9-alpine
+    build: .
     volumes:
       - ./luigi:/etc/luigi
       - ./luigistate:/luigi/state
@@ -19,17 +11,6 @@ services:
 
     ports:
     - 8082:8082
-    networks:
-      - backend
-
-  nginx:
-    image: nginx:1.15.8-alpine
-    ports:
-      - 80:80
-    volumes:
-      - ./data:/usr/share/nginx/html:ro
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    restart: always
     networks:
       - backend
 
@@ -48,7 +29,6 @@ services:
       test: ["CMD", "pg_isready", "-U", "luigi"]
       interval: 10s
       retries: 5
-      start_period: 5s
     restart: always
     networks:
       - backend
