@@ -12,7 +12,7 @@ from example.tasks import PipelineTask
 def load_env_variables():
     try:
         return {
-            'initial_sleep': int(os.getenv('INITIAL_SLEEP', 600)),
+            'initial_sleep': int(os.getenv('INITIAL_SLEEP', 30)),
         }
     except KeyError as key_err:
         error_message = 'Could not load the: {} environment variable, exiting\n'.format(datetime.now(), key_err)

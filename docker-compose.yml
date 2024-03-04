@@ -1,19 +1,22 @@
 version: '3'
 
 services:
-  example:
-    build: .
-    restart: always
-    environment:
-        - INITIAL_SLEEP=600
-    networks:
-      - backend
+#  example:
+#    build: .
+#    restart: always
+#    environment:
+#        - INITIAL_SLEEP=30
+#    networks:
+#      - backend
 
   luigi:
     image: axiom/docker-luigi:2.7.9-alpine
     volumes:
       - ./luigi:/etc/luigi
       - ./luigistate:/luigi/state
+      - ./hello_world.py:/etc/luigi/hello_world.py  # Mounting hello_world.py
+      - ./tasks:/etc/tasks
+
     ports:
     - 8082:8082
     networks:
@@ -30,5 +33,28 @@ services:
     networks:
       - backend
 
+  postgres:
+    container_name: postgres
+    image: postgres:11-alpine
+    environment:
+      POSTGRES_USER: luigi
+      POSTGRES_PASSWORD: luigi
+      POSTGRES_DB: luigi
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+      - ./sql-scripts:/docker-entrypoint-initdb.d  # Mount the SQL scripts
+
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "luigi"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+    networks:
+      - backend
+
+
 networks:
   backend:
+volumes:
+  postgres-db-volume:
